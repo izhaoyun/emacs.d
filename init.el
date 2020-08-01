@@ -34,7 +34,7 @@
 
 (require 'init-editor)
 (require 'init-develop)
-;;(require 'init-writing)
+(require 'init-writing)
 
 ;; Local Variables:
 ;; coding: utf-8

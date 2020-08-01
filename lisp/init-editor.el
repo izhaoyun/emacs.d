@@ -28,8 +28,7 @@
   :after ivy
   :demand t
   :bind
-  (("C-c u a" . swiper-all)
-   ("C-r" . swiper))
+  (("C-c u a" . swiper-all))
   :bind
   (:map swiper-map
         ("M-q" . swiper-query-replace)
@@ -49,15 +48,17 @@
    ("C-x r d" . counsel-bookmarked-directory)
    ("C-x C-b" . counsel-ibuffer)
    ("C-c c" . counsel-org-capture)
-   ("C-c C-l" . counsel-locate)
    ("C-x 6 m" . counsel-imenu)
    ("C-x 6 f" . counsel-git)
    ("C-x 6 g" . counsel-git-grep)
+   ("C-x C-d" . counsel-git-grep)
    ("C-x 6 b" . counsel-switch-to-shell-buffer)
    ("C-c k" . counsel-ag)
+   ("C-x l" . counsel-locate)
    ("C-x m" . counsel-mark-ring)
    ("M-y" . counsel-yank-pop)
    ("C-c f" . counsel-git-log)
+   ("C-c P" . counsel-package)
    ("M-s d" . counsel-dired-jump)
    ("M-s f" . counsel-file-jump)
    ("C-h a" . counsel-apropos)
@@ -110,15 +111,13 @@
   )
 
 (use-package volatile-highlights
+  :after (undo-tree)
   :diminish volatile-highlights-mode
   :init
   (volatile-highlights-mode)
   :config
-  (eval-after-load 'undo-tree
-    '(progn
-       (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
-       (vhl/install-extension 'undo-tree))
-    )
+  (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
+  (vhl/install-extension 'undo-tree)
   )
 
 (use-package highlight-symbol
@@ -197,6 +196,12 @@
   :disabled
   :bind
   (("C-c C-n" . dired-narrow))
+  )
+
+(use-package recentf
+  :ensure nil
+  :hook
+  (after-init . recentf-mode)
   )
 
 (provide 'init-editor)

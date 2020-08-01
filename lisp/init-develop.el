@@ -5,12 +5,16 @@
   '(:eval (concat " " (projectile-project-name)))
   :bind-keymap
   ("C-c p" . projectile-command-map)
+  :hook
+  (after-init . projectile-mode)
   :custom
-  (projectile-completion-system 'ivy)
+  ((projectile-completion-system 'ivy)
+   (projectile-sort-order 'recently-active)
+   (projectile-enable-caching t))
   )
 
 (use-package counsel-projectile
-  :after (projectile counsel)
+  :requires (projectile counsel)
   :init
   (counsel-projectile-mode)
   )
@@ -75,7 +79,8 @@
   (after-init . global-company-mode)
   :custom
   ((company-tooltip-limit 20)
-   (company-idle-delay .3)
+   (company-minimum-prefix-length 1)
+   (company-idle-delay 0.0)
    (company-echo-delay 0)
    (company-show-numbers t))
   )
@@ -92,6 +97,12 @@
   (company-quickhelp-delay nil)
   )
 
+(use-package flycheck
+  :diminish flycheck-mode
+  :hook
+  ((python-mode c-mode c++-mode go-mode) . flycheck-mode)
+  )
+
 (use-package yasnippet
   :diminish yas-minor-mode
   :bind
@@ -102,15 +113,9 @@
   (after-init . yas-global-mode)
   )
 
-(use-package yasnippet-snippets
-  :requires yasnippet
-  )
+(use-package yasnippet-snippets :requires yasnippet)
 
-(use-package flycheck
-  :diminish flycheck-mode
-  :hook
-  ((python-mode c-mode c++-mode go-mode) . flycheck-mode)
-  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package lsp-mode
   :hook
@@ -118,7 +123,13 @@
   :hook
   (lsp-mode . lsp-enable-which-key-integration)
   :custom
-  ((lsp-prefer-flymake nil)
+  ((lsp-enable-xref t)
+   (lsp-modeline-diagnostics-enable t)
+   (lsp-headerline-breadcrumb-enable t)
+   (lsp-enable-snippet t)
+   (lsp-enable-imenu t)
+   (lsp-enable-file-watchers t)
+   (lsp-prefer-flymake nil)
    (lsp-keymap-prefix "C-c l"))
   )
 
@@ -157,6 +168,8 @@
    (company-lsp-enable-snippet t)
    (company-lsp-enable-recompletion t))
   )
+
+(use-package lsp-ivy :after lsp)
 
 (use-package dap-mode
   :requires lsp-mode
@@ -241,13 +254,6 @@
   :demand t
   :mode
   ("\\.h\\'" . c++-mode)
-  )
-
-(use-package ccls
-  :disabled
-  :hook
-  ((c-mode c++-mode objc-mode cuda-mode) .
-   (lambda () (require 'ccls) (lsp)))
   )
 
 (use-package ggtags
@@ -356,18 +362,15 @@
   )
 
 (use-package dap-gdb-lldb
-  :disabled
   :ensure dap-mode
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package go-mode
-  :mode
-  (("\\.go\\'" . go-mode)
-   ("go\\.mod\\'" . go-dot-mod-mode))
-  :hook
-  (before-save . gofmt-before-save)
+  :config
+  (add-hook 'before-save-hook (lambda () (when (eq 'go-mode major-mode)
+                                           (gofmt-before-save))))
   )
 
 (use-package company-go
@@ -383,6 +386,14 @@
   ((go-mode . dap-mode)
    (go-mode . dap-ui-mode)
    (go-mode . dap-tooltip-mode))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package rust-mode
+  :config
+  (add-hook 'before-save-hook (lambda () (when (eq 'rust-mode major-mode)
+                                           (lsp-format-buffer))))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
