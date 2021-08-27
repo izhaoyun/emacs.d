@@ -158,17 +158,6 @@
   (lsp-mode . lsp-treemacs-sync-mode)
   )
 
-(use-package company-lsp
-  :after (company lsp)
-  :init
-  (push 'company-lsp company-backends)
-  :custom
-  ((company-lsp-cache-candidates 'auto)
-   (company-lsp-async t)
-   (company-lsp-enable-snippet t)
-   (company-lsp-enable-recompletion t))
-  )
-
 (use-package lsp-ivy :after lsp)
 
 (use-package dap-mode
