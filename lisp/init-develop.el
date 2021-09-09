@@ -118,8 +118,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package lsp-mode
+  :commands
+  (lsp lsp-deferred)
   :hook
-  ((c-mode c++-mode python-mode go-mode) . lsp-deferred)
+  ((c-mode c++-mode python-mode go-mode rust-mode) . lsp)
   :hook
   (lsp-mode . lsp-enable-which-key-integration)
   :custom
@@ -130,7 +132,7 @@
    (lsp-enable-imenu t)
    (lsp-enable-file-watchers t)
    (lsp-prefer-flymake nil)
-   (lsp-keymap-prefix "C-c l"))
+   (lsp-keymap-prefix "s-l"))
   )
 
 (use-package lsp-ui
@@ -158,7 +160,10 @@
   (lsp-mode . lsp-treemacs-sync-mode)
   )
 
-(use-package lsp-ivy :after lsp)
+(use-package lsp-ivy
+  :after lsp
+  :commands lsp-ivy-workspace-workspace-symbol
+  )
 
 (use-package dap-mode
   :requires lsp-mode
@@ -245,6 +250,19 @@
   ("\\.h\\'" . c++-mode)
   )
 
+(use-package xcscope
+  :hook
+  ((c-mode c++-mode) . cscope-setup)
+  :bind
+  (:map cscope-minor-mode-keymap
+        ("C-c s a" . cscope-set-initial-directory)
+        ("C-c s A" . cscope-unset-initial-directory)
+        ("C-c s s" . cscope-unset-find-this-symbol)
+        ("C-c s d" . cscope-unset-find-global-definition))
+  :custom
+  (cscope-program "/opt/homebrew/bin/gtags-cscope")
+  )
+
 (use-package ggtags
   :hook
   ((c-mode c++-mode) . ggtags-mode)
@@ -256,8 +274,10 @@
         ("C-c g f" . ggtags-find-file)
         ("C-c g c" . ggtags-create-tags)
         ("C-c g u" . ggtags-update-tags)
-        ("C-c <"   . ggtags-prev-mark)
-        ("C-c >"   . ggtags-next-mark))
+        ("C-c g p"   . ggtags-prev-mark)
+        ("C-c g ["   . ggtags-prev-mark)
+        ("C-c g n"   . ggtags-next-mark)
+        ("C-c g ]"   . ggtags-next-mark))
   :config
   (setq-local imenu-create-index-function
               #'ggtags-build-imenu-index)
@@ -404,14 +424,6 @@
 (use-package virtualenvwrapper
   :hook
   (python-mode . venv-initialize-interactive-shells)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package lsp-java
-  :after lsp
-  :hook
-  (java-mode . lsp)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

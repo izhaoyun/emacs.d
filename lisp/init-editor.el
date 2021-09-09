@@ -1,8 +1,18 @@
+(use-package exec-path-from-shell
+  ;; :if (memq window-system '(mac ns))
+  :hook
+  (after-init . exec-path-from-shell-initialize)
+  )
+
+(use-package use-package-hydra)
+
 (use-package ivy
   :diminish ivy-mode
   :bind
-  (("C-x b"   . ivy-switch-buffer)
-   ("C-c C-r" . ivy-resume))
+  (("C-x b" . ivy-switch-buffer)
+   ("C-c C-r" . ivy-resume)
+   ("C-c v" . ivy-push-view)
+   ("C-c V" . ivy-pop-view))
   :bind
   (:map ivy-minibuffer-map
         ("C-c o" . ivy-occur)
@@ -47,12 +57,12 @@
    ("C-x r b" . counsel-bookmark)
    ("C-x r d" . counsel-bookmarked-directory)
    ("C-x C-b" . counsel-ibuffer)
-   ("C-c c" . counsel-org-capture)
-   ("C-x 6 m" . counsel-imenu)
-   ("C-x 6 f" . counsel-git)
-   ("C-x 6 g" . counsel-git-grep)
-   ("C-x C-d" . counsel-git-grep)
-   ("C-x 6 b" . counsel-switch-to-shell-buffer)
+   ("C-c c" . counsel-compile)
+   ("C-c g m" . counsel-imenu)
+   ("C-c g g" . counsel-git)
+   ("C-c g j" . counsel-git-grep)
+   ("C-c g l" . counsel-git-log)
+   ("C-c g b" . counsel-switch-to-shell-buffer)
    ("C-c k" . counsel-ag)
    ("C-x l" . counsel-locate)
    ("C-x m" . counsel-mark-ring)
@@ -121,9 +131,8 @@
   )
 
 (use-package highlight-symbol
-  :if window-system
   :bind
-  (("C-<f3>" . highlight-symbol)
+  (("C-h s" . highlight-symbol)
    ("<f3>"   . highlight-symbol-next)
    ("S-<f3>" . highlight-symbol-prev)
    ("M-<f3>" . highlight-symbol-query-replace))
@@ -144,11 +153,8 @@
   )
 
 (use-package expand-region
-  ;; :if window-system
   :bind
-  (("<f2> =" . er/expand-region)
-   ("<f2> -" . er/contract-region)
-   ("C-=" . er/expand-region)
+  (("C-=" . er/expand-region)
    ("C--" . er/contract-region))
   )
 
@@ -157,8 +163,13 @@
   :hook
   ((prog-mode cmake-mode org-mode) . undo-tree-mode)
   :bind
-  (("<f2> z" . undo)
-   ("<f2> c" . redo))
+  (("C-x u" . undo-tree-visualize)
+   ("C-x r u" . undo-tree-save-state-to-register)
+   ("C-x r U" . undo-tree-restore-state-from-register)
+   ("C-/" . undo-tree-undo)
+   ("C-_" . undo-tree-undo)
+   ("C-?" . undo-tree-redo)
+   ("M-_" . undo-tree-redo))
   :init
   (defalias 'redo 'undo-tree-redo)
   :custom
