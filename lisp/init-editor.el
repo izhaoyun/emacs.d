@@ -131,12 +131,25 @@
   )
 
 (use-package highlight-symbol
+  :after hydra
   :bind
-  (("C-h s" . highlight-symbol)
-   ("<f3>"   . highlight-symbol-next)
-   ("S-<f3>" . highlight-symbol-prev)
-   ("M-<f3>" . highlight-symbol-query-replace))
+  ("C-h c" . hydra-hs/body)
+  :hydra (hydra-hs (:color blue :hint nil)
+		   "
+		   ^Highlight Symbol^
+--------------------------------------------------------------
+ _c_: highlight-symbol
+ _n_: highlight-symbol-next
+ _p_: highlight-symbol-prev
+ _r_: highlight-symbol-query-replace
+"
+		   ("c" highlight-symbol)
+		   ("n" highlight-symbol-next)
+		   ("p" highlight-symbol-prev)
+		   ("r" highlight-symbol-query-replace)
+  		   )
   )
+
 
 (use-package which-key
   :diminish which-key-mode
